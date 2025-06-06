@@ -8,5 +8,6 @@ local whitelist = {
 "wodexiaohao19",
 "qingtiannb6",
 "long2012qw2"
+"ndjbehvhehbihiehj105"
 }
 return whitelist
