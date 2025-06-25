@@ -3,6 +3,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
 local player = Players.LocalPlayer
 
+-- 创建UI界面
 local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "ProteinEggDonator"
 screenGui.Parent = player.PlayerGui
@@ -32,7 +33,8 @@ title.Font = Enum.Font.GothamBold
 title.TextSize = 22
 title.Parent = mainFrame
 
-local playerFrame = Instance.new("Frame")
+local playerFrame =
+Instance.new("Frame")
 playerFrame.Name = "PlayerFrame"
 playerFrame.Size = UDim2.new(0.9, 0, 0, 150)
 playerFrame.Position = UDim2.new(0.05, 0, 0.15, 0)
@@ -40,8 +42,7 @@ playerFrame.BackgroundColor3 = Color3.fromRGB(50, 50, 60)
 playerFrame.BorderSizePixel = 0
 playerFrame.Parent = mainFrame
 
-local playerCorner =
-Instance.new("UICorner")
+local playerCorner = Instance.new("UICorner")
 playerCorner.CornerRadius = UDim.new(0, 6)
 playerCorner.Parent = playerFrame
 
@@ -56,6 +57,7 @@ playerTitle.Font = Enum.Font.Gotham
 playerTitle.TextSize = 18
 playerTitle.Parent = playerFrame
 
+-- 修复重点：滚动框设置
 local scrollFrame = Instance.new("ScrollingFrame")
 scrollFrame.Name = "PlayerScroll"
 scrollFrame.Size = UDim2.new(1, -10, 1, -40)
@@ -63,7 +65,12 @@ scrollFrame.Position = UDim2.new(0, 5, 0, 35)
 scrollFrame.BackgroundTransparency = 1
 scrollFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
 scrollFrame.ScrollBarThickness = 4
+scrollFrame.AutomaticCanvasSize = Enum.AutomaticSize.Y -- 自动调整高度
 scrollFrame.Parent = playerFrame
+
+local uiListLayout = Instance.new("UIListLayout")
+uiListLayout.Padding = UDim.new(0, 5)
+uiListLayout.Parent = scrollFrame
 
 local amountFrame = Instance.new("Frame")
 amountFrame.Name = "AmountFrame"
@@ -73,8 +80,7 @@ amountFrame.BackgroundColor3 = Color3.fromRGB(50, 50, 60)
 amountFrame.BorderSizePixel = 0
 amountFrame.Parent = mainFrame
 
-local amountCorner =
-Instance.new("UICorner")
+local amountCorner = Instance.new("UICorner")
 amountCorner.CornerRadius = UDim.new(0, 6)
 amountCorner.Parent = amountFrame
 
@@ -89,7 +95,8 @@ amountTitle.Font = Enum.Font.Gotham
 amountTitle.TextSize = 18
 amountTitle.Parent = amountFrame
 
-local amountBox = Instance.new("TextBox")
+local amountBox =
+Instance.new("TextBox")
 amountBox.Name = "AmountBox"
 amountBox.Size = UDim2.new(0.5, 0, 0, 30)
 amountBox.Position = UDim2.new(0.25, 0, 0.5, 0)
@@ -119,7 +126,8 @@ local donateCorner = Instance.new("UICorner")
 donateCorner.CornerRadius = UDim.new(0, 6)
 donateCorner.Parent = donateButton
 
-local statusLabel = Instance.new("TextLabel")
+local statusLabel =
+Instance.new("TextLabel")
 statusLabel.Name = "StatusLabel"
 statusLabel.Size = UDim2.new(0.8, 0, 0, 30)
 statusLabel.Position = UDim2.new(0.1, 0, 0.88, 0)
@@ -130,8 +138,7 @@ statusLabel.Font = Enum.Font.Gotham
 statusLabel.TextSize = 16
 statusLabel.Parent = mainFrame
 
-local closeButton =
-Instance.new("TextButton")
+local closeButton = Instance.new("TextButton")
 closeButton.Name = "CloseButton"
 closeButton.Size = UDim2.new(0, 30, 0, 30)
 closeButton.Position = UDim2.new(1, -35, 0, 10)
@@ -142,22 +149,35 @@ closeButton.Font = Enum.Font.GothamBold
 closeButton.TextSize = 18
 closeButton.Parent = mainFrame
 
+-- 修复重点：玩家列表更新函数
 local function updatePlayerList()
+    -- 清除现有按钮
     for _, child in ipairs(scrollFrame:GetChildren()) do
-        if child:IsA("TextButton") then
+        if child:IsA("TextButton") or child:IsA("TextLabel") then
             child:Destroy()
         end
     end
     
     local allPlayers = Players:GetPlayers()
-    local yPos = 5
+    
+    if #allPlayers <= 1 then
+    local noPlayers = Instance.new("TextLabel")
+        noPlayers.Text = "没有其他玩家"
+        noPlayers.Size = UDim2.new(1, -10, 0, 30)
+        noPlayers.Position = UDim2.new(0, 5, 0, 5)
+        noPlayers.BackgroundTransparency = 1
+        noPlayers.TextColor3 = Color3.fromRGB(200, 200, 200)
+        noPlayers.Font = Enum.Font.Gotham
+        noPlayers.TextSize = 16
+        noPlayers.Parent = scrollFrame
+        return
+    end
     
     for _, plr in ipairs(allPlayers) do
         if plr ~= player then
             local playerButton = Instance.new("TextButton")
             playerButton.Name = plr.Name
             playerButton.Size = UDim2.new(1, -10, 0, 30)
-            playerButton.Position = UDim2.new(0, 5, 0, yPos)
             playerButton.BackgroundColor3 = Color3.fromRGB(65, 65, 75)
             playerButton.Text = plr.Name
             playerButton.TextColor3 = Color3.fromRGB(220, 220, 220)
@@ -175,20 +195,16 @@ local function updatePlayerList()
                         btn.BackgroundColor3 = Color3.fromRGB(65, 65, 75)
                     end
                 end
-                
                 playerButton.BackgroundColor3 = Color3.fromRGB(0, 120, 215)
                 statusLabel.Text = "已选择: " .. plr.Name
             end)
-            
-            yPos = yPos + 35
         end
     end
-    
-    scrollFrame.CanvasSize = UDim2.new(0, 0, 0, yPos)
 end
 
 local function findDonateSystem()
-    local gui = player:WaitForChild("PlayerGui", 5)
+    local gui =
+    player:WaitForChild("PlayerGui", 5)
     if gui then
         local donateButton = gui:FindFirstChild("DonateButton", true)
         if donateButton then
@@ -200,7 +216,7 @@ local function findDonateSystem()
     if remotes then
         local donateRemote = remotes:FindFirstChild("DonateEgg")
         if donateRemote then
-        return donateRemote, "remote"
+            return donateRemote, "remote"
         end
     end
     
@@ -226,12 +242,13 @@ local function donateEgg(targetPlayer, amount)
         end
     else
         statusLabel.Text = "错误: 未找到赠送系统!"
-        end
+    end
     
     donateButton.Text = "赠送蛋白质蛋"
     donateButton.BackgroundColor3 = Color3.fromRGB(0, 170, 100)
 end
 
+-- 初始化UI
 updatePlayerList()
 
 donateButton.MouseButton1Click:Connect(function()
@@ -248,7 +265,8 @@ donateButton.MouseButton1Click:Connect(function()
         return
     end
     
-    local amount = tonumber(amountBox.Text)
+    local amount =
+    tonumber(amountBox.Text)
     if not amount or amount < 1 then
         statusLabel.Text = "错误: 请输入有效的数量!"
         return
