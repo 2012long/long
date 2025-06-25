@@ -40,7 +40,8 @@ playerFrame.BackgroundColor3 = Color3.fromRGB(50, 50, 60)
 playerFrame.BorderSizePixel = 0
 playerFrame.Parent = mainFrame
 
-local playerCorner = Instance.new("UICorner")
+local playerCorner =
+Instance.new("UICorner")
 playerCorner.CornerRadius = UDim.new(0, 6)
 playerCorner.Parent = playerFrame
 
@@ -72,7 +73,8 @@ amountFrame.BackgroundColor3 = Color3.fromRGB(50, 50, 60)
 amountFrame.BorderSizePixel = 0
 amountFrame.Parent = mainFrame
 
-local amountCorner = Instance.new("UICorner")
+local amountCorner =
+Instance.new("UICorner")
 amountCorner.CornerRadius = UDim.new(0, 6)
 amountCorner.Parent = amountFrame
 
@@ -128,7 +130,8 @@ statusLabel.Font = Enum.Font.Gotham
 statusLabel.TextSize = 16
 statusLabel.Parent = mainFrame
 
-local closeButton = Instance.new("TextButton")
+local closeButton =
+Instance.new("TextButton")
 closeButton.Name = "CloseButton"
 closeButton.Size = UDim2.new(0, 30, 0, 30)
 closeButton.Position = UDim2.new(1, -35, 0, 10)
@@ -185,7 +188,6 @@ local function updatePlayerList()
 end
 
 local function findDonateSystem()
-local function findDonateSystem()
     local gui = player:WaitForChild("PlayerGui", 5)
     if gui then
         local donateButton = gui:FindFirstChild("DonateButton", true)
@@ -198,7 +200,7 @@ local function findDonateSystem()
     if remotes then
         local donateRemote = remotes:FindFirstChild("DonateEgg")
         if donateRemote then
-            return donateRemote, "remote"
+        return donateRemote, "remote"
         end
     end
     
@@ -224,7 +226,7 @@ local function donateEgg(targetPlayer, amount)
         end
     else
         statusLabel.Text = "错误: 未找到赠送系统!"
-    end
+        end
     
     donateButton.Text = "赠送蛋白质蛋"
     donateButton.BackgroundColor3 = Color3.fromRGB(0, 170, 100)
@@ -259,7 +261,5 @@ closeButton.MouseButton1Click:Connect(function()
     screenGui:Destroy()
 end)
 
-while true do
-    wait(30)
-    updatePlayerList()
-end
+Players.PlayerAdded:Connect(updatePlayerList)
+Players.PlayerRemoving:Connect(updatePlayerList)
