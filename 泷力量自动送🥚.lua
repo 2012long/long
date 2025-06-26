@@ -3,10 +3,9 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
 local player = Players.LocalPlayer
 
--- 创建UI界面
 local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "ProteinEggDonator"
-screenGui.Parent = player.PlayerGui
+screenGui.Parent = player:WaitForChild("PlayerGui")
 
 local mainFrame = Instance.new("Frame")
 mainFrame.Name = "MainFrame"
@@ -33,8 +32,7 @@ title.Font = Enum.Font.GothamBold
 title.TextSize = 22
 title.Parent = mainFrame
 
-local playerFrame =
-Instance.new("Frame")
+local playerFrame = Instance.new("Frame")
 playerFrame.Name = "PlayerFrame"
 playerFrame.Size = UDim2.new(0.9, 0, 0, 150)
 playerFrame.Position = UDim2.new(0.05, 0, 0.15, 0)
@@ -57,15 +55,14 @@ playerTitle.Font = Enum.Font.Gotham
 playerTitle.TextSize = 18
 playerTitle.Parent = playerFrame
 
--- 修复重点：滚动框设置
+-- 修复滚动框设置
 local scrollFrame = Instance.new("ScrollingFrame")
 scrollFrame.Name = "PlayerScroll"
 scrollFrame.Size = UDim2.new(1, -10, 1, -40)
 scrollFrame.Position = UDim2.new(0, 5, 0, 35)
 scrollFrame.BackgroundTransparency = 1
-scrollFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
 scrollFrame.ScrollBarThickness = 4
-scrollFrame.AutomaticCanvasSize = Enum.AutomaticSize.Y -- 自动调整高度
+scrollFrame.AutomaticCanvasSize = Enum.AutomaticSize.Y
 scrollFrame.Parent = playerFrame
 
 local uiListLayout = Instance.new("UIListLayout")
@@ -80,7 +77,8 @@ amountFrame.BackgroundColor3 = Color3.fromRGB(50, 50, 60)
 amountFrame.BorderSizePixel = 0
 amountFrame.Parent = mainFrame
 
-local amountCorner = Instance.new("UICorner")
+local amountCorner =
+Instance.new("UICorner")
 amountCorner.CornerRadius = UDim.new(0, 6)
 amountCorner.Parent = amountFrame
 
@@ -95,8 +93,7 @@ amountTitle.Font = Enum.Font.Gotham
 amountTitle.TextSize = 18
 amountTitle.Parent = amountFrame
 
-local amountBox =
-Instance.new("TextBox")
+local amountBox = Instance.new("TextBox")
 amountBox.Name = "AmountBox"
 amountBox.Size = UDim2.new(0.5, 0, 0, 30)
 amountBox.Position = UDim2.new(0.25, 0, 0.5, 0)
@@ -123,11 +120,11 @@ donateButton.TextSize = 20
 donateButton.Parent = mainFrame
 
 local donateCorner = Instance.new("UICorner")
-donateCorner.CornerRadius = UDim.new(0, 6)
+donateCorner.CornerRadius =
+UDim.new(0, 6)
 donateCorner.Parent = donateButton
 
-local statusLabel =
-Instance.new("TextLabel")
+local statusLabel = Instance.new("TextLabel")
 statusLabel.Name = "StatusLabel"
 statusLabel.Size = UDim2.new(0.8, 0, 0, 30)
 statusLabel.Position = UDim2.new(0.1, 0, 0.88, 0)
@@ -149,9 +146,12 @@ closeButton.Font = Enum.Font.GothamBold
 closeButton.TextSize = 18
 closeButton.Parent = mainFrame
 
--- 修复重点：玩家列表更新函数
+-- 确保滚动框内容可见
+uiListLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+    scrollFrame.CanvasSize = UDim2.new(0, 0, 0, uiListLayout.AbsoluteContentSize.Y)
+end)
+
 local function updatePlayerList()
-    -- 清除现有按钮
     for _, child in ipairs(scrollFrame:GetChildren()) do
         if child:IsA("TextButton") or child:IsA("TextLabel") then
             child:Destroy()
@@ -161,7 +161,8 @@ local function updatePlayerList()
     local allPlayers = Players:GetPlayers()
     
     if #allPlayers <= 1 then
-    local noPlayers = Instance.new("TextLabel")
+        local noPlayers =
+        Instance.new("TextLabel")
         noPlayers.Text = "没有其他玩家"
         noPlayers.Size = UDim2.new(1, -10, 0, 30)
         noPlayers.Position = UDim2.new(0, 5, 0, 5)
@@ -201,10 +202,8 @@ local function updatePlayerList()
         end
     end
 end
-
 local function findDonateSystem()
-    local gui =
-    player:WaitForChild("PlayerGui", 5)
+    local gui = player:FindFirstChild("PlayerGui")
     if gui then
         local donateButton = gui:FindFirstChild("DonateButton", true)
         if donateButton then
@@ -248,7 +247,6 @@ local function donateEgg(targetPlayer, amount)
     donateButton.BackgroundColor3 = Color3.fromRGB(0, 170, 100)
 end
 
--- 初始化UI
 updatePlayerList()
 
 donateButton.MouseButton1Click:Connect(function()
@@ -265,8 +263,7 @@ donateButton.MouseButton1Click:Connect(function()
         return
     end
     
-    local amount =
-    tonumber(amountBox.Text)
+    local amount = tonumber(amountBox.Text)
     if not amount or amount < 1 then
         statusLabel.Text = "错误: 请输入有效的数量!"
         return
