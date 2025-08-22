@@ -2,7 +2,7 @@ local config = {
     github_owner = "20120long",
     github_repo = "TiKa_script",
     script_path = "Loder.enc",
-    github_token = "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"
+    github_token = "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"
 }
 
 local function is_valid_environment()
